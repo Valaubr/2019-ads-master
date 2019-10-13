@@ -1,37 +1,45 @@
 package ru.mail.polis.adsN2;
 
-
-import java.util.ArrayList;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
-/**
- * Problem solution template.
- */
 public class DZ2_Twelve {
-    ArrayList<Integer> arr = new ArrayList<>();
-    public static void main(final String[] arg) {
+    public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        int[] stair = new int[n + 2];
+        stair[0] = 0;
+        stair[n + 1] = 0;
 
-        int a = in.nextInt();
-        int[] stair = new int[a];
-        for (int i = 0; i < a; i++){
-            int b = in.nextInt();
-            stair[i] = b;
+        for (int i = 1; i < n + 1; i++) {
+            stair[i] = in.nextInt();
         }
+
         int step = in.nextInt();
 
-        logic(stair, step);
+        if (step == 1) {
+            int sum = 0;
+            for (int i = 1; i < n + 1; i++) {
+                sum += stair[i];
+            }
+            System.out.println(sum);
+        }
+
+        for (int i = 1; i < n + 2; i++) {
+            stair[i] += getMax(stair, i - step, i);
+        }
+        System.out.println(stair[n + 1]);
     }
 
-    private static void logic(int[] stair, int step) {
-        int result = 0;
-        int[] mass = new int[step];
-        for (int i = 0; i < stair.length; i++){
-            if (i + step < stair.length){
-                for (int j = i; j < i + step; j++){
-
-                }
-            }
+    private static int getMax(int[] stair, int left, int right) {
+        if (left < 0) {
+            left = 0;
         }
+        int max = stair[left];
+        for (int i = left + 1; i < right; i++) {
+            if (stair[i] > max)
+                max = stair[i];
+        }
+        return max;
     }
 }

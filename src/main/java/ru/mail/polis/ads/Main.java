@@ -1,67 +1,66 @@
 package ru.mail.polis.ads;
 
-import java.util.*;
+import java.util.Scanner;
+
+// https://www.e-olymp.com/ru/submissions/5852076
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        String incoming = scanner.next();
-        int n = incoming.length();
-        int[][] d = new int[n][n];
-        int[][] split = new int[n][n];
 
-        for (int i = 0; i < n; i++){
-            for (int j = i; j >= 0; j--){
-                if (j == i){
-                    d[j][i] = 1;
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String incoming = in.nextLine();
+        int n = incoming.length();
+        int[][] tablet = new int[n][n];
+        int[][] tabletOfSplit = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j >= 0; j--) {
+                if (j == i) {
+                    tablet[j][i] = 1;
                     continue;
                 }
-                int min = Integer.MAX_VALUE;
+                int min = 999999999;
                 int splitMin = -1;
-                if (incoming.charAt(j) == '(' && incoming.charAt(i) == ')' ||
-                incoming.charAt(j) == '[' && incoming.charAt(i) == ']'){
-                    min = d[i+1][j-1];
+                if ((incoming.charAt(j) == '(' && incoming.charAt(i) == ')')
+                        || (incoming.charAt(j) == '[' && incoming.charAt(i) == ']')) {
+                    min = tablet[j + 1][i - 1];
                 }
                 for (int k = j; k < i; k++) {
-                    if (d[j][k] + d[k+1][i] < min){
-                        min = d[j][k] + d[k+1][i];
+                    if (tablet[j][k] + tablet[k + 1][i] < min) {
+                        min = tablet[j][k] + tablet[k + 1][i];
                         splitMin = k;
                     }
                 }
-                d[i][j] = min;
-                split[i][j] = splitMin;
+                tablet[j][i] = min;
+                tabletOfSplit[j][i] = splitMin;
             }
         }
-        System.out.println(d[0][n-1]);
-        restore(0, n-1, incoming, d, split);
+        logic(0, n - 1, incoming, tablet, tabletOfSplit);
     }
 
-    static void restore(int i, int j, String s, int[][] d, int[][] split){
-        if (i == j){
-            switch (s.charAt(i)){
-                case '(':
-                case ')':
-                    System.out.print("()");
-                    break;
-                case '[':
-                case ']':
-                    System.out.println("[]");
-                    break;
+    public static void logic(int j, int i, String incoming, int[][] tablet, int[][] tabletOfSplit) {
+        if (j > i) {
+            return;
+        }
+        if (j == i) {
+            if (incoming.charAt(j) == '(' || incoming.charAt(j) == ')') {
+                System.out.print("()");
+            } else {
+                System.out.print("[]");
             }
             return;
         }
-        if (d[i][j] == 0){
-            System.out.println(s.substring(i, i + j));
+        if (tablet[j][i] == 0) {
+            System.out.print(incoming.substring(j, i + 1));
             return;
         }
-        if (split[i][j] == -1){
-            System.out.println(s.charAt(i));
-            restore(i+1, j-1, s, d, split);
-            System.out.println(s.charAt(j));
+        if (tabletOfSplit[j][i] == -1) {
+            System.out.print(incoming.charAt(j));
+            logic(j + 1, i - 1, incoming, tablet, tabletOfSplit);
+            System.out.print(incoming.charAt(i));
             return;
         }
-        int k = split[i][j];
-        restore(i,k,s,d,split);
-
+        int thisElem = tabletOfSplit[j][i];
+        logic(j, thisElem, incoming, tablet, tabletOfSplit);
+        logic(thisElem + 1, i, incoming, tablet, tabletOfSplit);
     }
 }
